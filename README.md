@@ -1,26 +1,24 @@
 ---
-imports: 
+imports:
   - ./dist/walking-dinosaur.js
   - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-video.js
-
 ---
 
-# Opral Markdown WC 
+# Markdown WC
 
 Enables writing documentation with web components in markdown.
 
 ```markdown
 ---
-imports: 
+imports:
   - https://cdn.jsdelivr.net/npm/@opral/markdown-wc/dist/walking-dinosaur.js
 ---
 
-# Opral Markdown WC 
+# Markdown WC
 
 Enables writing documentation with web components in markdown.
 
 <walking-dinosaur></walking-dinosaur>
-<doc-video src="https://youtu.be/IMjJ1jvKsZU"></doc-video>
 ```
 
 <walking-dinosaur></walking-dinosaur>
@@ -35,23 +33,25 @@ Enables writing documentation with web components in markdown.
 
 ## Comparison
 
-| Feature                        | Markdown | @opral/markdown-wc | React MDX | Svelte MDsveX | Markdoc |
-|--------------------------------|----------|--------------------|-----------|---------------|---------|
-| Components in markdown         | ❌       | ✅                 | ✅        | ✅             | ✅      |
-| Framework agnostic             | ✅       | ✅                 | ❌        | ❌             | ✅      |
-| Portable                       | ✅       | ✅                 | ❌        | ❌             | ❌      |
-| No custom syntax               | ✅       | ✅                 | ❌        | ❌             | ❌      |
+| Feature                | Markdown | @opral/markdown-wc | React MDX | Svelte MDsveX | Markdoc |
+| ---------------------- | -------- | ------------------ | --------- | ------------- | ------- |
+| Components in markdown | ❌       | ✅                 | ✅        | ✅            | ✅      |
+| Framework agnostic     | ✅       | ✅                 | ❌        | ❌            | ✅      |
+| Portable               | ✅       | ✅                 | ❌        | ❌            | ❌      |
+| No custom syntax       | ✅       | ✅                 | ❌        | ❌            | ❌      |
 
-
-## Usage in browser 
+## Usage in browser
 
 The `<markdown-wc-embed>` element can be used to embed markdown-wc in a webpage.
 
 ```html
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@opral/markdown-wc/dist/markdown-wc-embed.js"></script>
-  <body>
-    <markdown-wc-embed src="https://my-markdown-url.com/markdown.md"></markdown-wc-embed>
-  </body>
+<script
+	type="module"
+	src="https://cdn.jsdelivr.net/npm/@opral/markdown-wc/dist/markdown-wc-embed.js"
+></script>
+<body>
+	<markdown-wc-embed src="https://my-markdown-url.com/markdown.md"></markdown-wc-embed>
+</body>
 ```
 
 ## Usage in another markdown file
@@ -76,7 +76,7 @@ This is a markdown file that embeds another markdown file 🤯
 Enables SSR and more control over the rendering process.
 
 ```ts
-import { parse } from '@opral/markdown-wc';
+import { parse } from "@opral/markdown-wc"
 
 const markdown = `
 
@@ -87,23 +87,23 @@ const markdown = `
   <h1>Card Title</h1>
   <p>Card content</p>
 </doc-card>
-`;
+`
 
 // Parse markdown
-const parsed = parse(markdown);
+const parsed = parse(markdown)
 
 // Optionally open external links in new tabs
 // const parsed = parse(markdown, { externalLinks: true })
 
 // Register web components
 for (const url of parsed.frontmatter.imports ?? []) {
-  // optionally sanitize the imported imported here
-  // by, for example, only trusting a specific domain
-  await import(url)
+	// optionally sanitize the imported imported here
+	// by, for example, only trusting a specific domain
+	await import(url)
 }
 
 // render HTML
-render(parsed.html);
+render(parsed.html)
 ```
 
 ## Styling markdown-wc
@@ -123,33 +123,33 @@ Or provide your own CSS. Example:
 ```css
 /* Wrap rendered HTML in a container and style inside it */
 .markdown-body {
-  color: #213547;
-  font-size: 16px;
-  line-height: 1.7;
+	color: #213547;
+	font-size: 16px;
+	line-height: 1.7;
 }
 
 .markdown-body h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 0 0 1rem;
+	font-size: 2rem;
+	font-weight: 600;
+	margin: 0 0 1rem;
 }
 
 .markdown-body h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 2rem 0 0.75rem;
-  border-top: 1px solid #e2e2e3;
-  padding-top: 1.25rem;
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin: 2rem 0 0.75rem;
+	border-top: 1px solid #e2e2e3;
+	padding-top: 1.25rem;
 }
 
 .markdown-body p {
-  margin: 1rem 0;
+	margin: 1rem 0;
 }
 
 .markdown-body a {
-  color: #3a5ccc;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+	color: #3a5ccc;
+	text-decoration: underline;
+	text-underline-offset: 3px;
 }
 ```
 
@@ -157,26 +157,26 @@ Alert styling example (GitHub alerts):
 
 ```css
 .markdown-body blockquote[data-mwc-alert] {
-  border-left: none;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin: 1rem 0;
+	border-left: none;
+	border-radius: 8px;
+	padding: 12px 16px;
+	margin: 1rem 0;
 }
 
 .markdown-body blockquote[data-mwc-alert] [data-mwc-alert-marker] {
-  display: none;
+	display: none;
 }
 
 .markdown-body blockquote[data-mwc-alert="note"] {
-  background: rgba(100, 108, 255, 0.08);
-  border: 1px solid rgba(100, 108, 255, 0.16);
+	background: rgba(100, 108, 255, 0.08);
+	border: 1px solid rgba(100, 108, 255, 0.16);
 }
 .markdown-body blockquote[data-mwc-alert="note"]::before {
-  content: "Note";
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #3451b2;
+	content: "Note";
+	display: block;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	color: #3451b2;
 }
 ```
 
@@ -184,34 +184,34 @@ Code block styling / copy button hook example:
 
 ```css
 .markdown-body pre[data-mwc-codeblock] {
-  position: relative;
-  padding: 16px 20px;
-  border-radius: 8px;
-  background: #f6f6f7;
-  overflow-x: auto;
+	position: relative;
+	padding: 16px 20px;
+	border-radius: 8px;
+	background: #f6f6f7;
+	overflow-x: auto;
 }
 
 .markdown-body pre[data-mwc-codeblock] > button[data-mwc-copy-button] {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid #e2e2e3;
-  background: #fff;
-  opacity: 0;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	font-size: 12px;
+	padding: 4px 8px;
+	border-radius: 6px;
+	border: 1px solid #e2e2e3;
+	background: #fff;
+	opacity: 0;
 }
 
 .markdown-body pre[data-mwc-codeblock]:hover > button[data-mwc-copy-button] {
-  opacity: 1;
+	opacity: 1;
 }
 ```
 
 ## Limitations
 
 - sanitzation of markdown as well as custom elements is not implemented atm
-- SSR is DIY atm (use the `parse` function and SSR the markdown with [lit for example](https://lit.dev/docs/ssr/overview/)) 
+- SSR is DIY atm (use the `parse` function and SSR the markdown with [lit for example](https://lit.dev/docs/ssr/overview/))
 
 ## GitHub-style alerts / callouts
 
@@ -240,10 +240,10 @@ Alerts are emitted as normal blockquotes annotated with data attributes:
 
 ```html
 <blockquote data-mwc-alert="note">
-  <p>
-    <span data-mwc-alert-marker>[!NOTE]</span>
-    Highlights information that users should take into account.
-  </p>
+	<p>
+		<span data-mwc-alert-marker>[!NOTE]</span>
+		Highlights information that users should take into account.
+	</p>
 </blockquote>
 ```
 
@@ -257,26 +257,26 @@ Example (VitePress-like):
 
 ```css
 blockquote[data-mwc-alert] {
-  border-left: none;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 16px 0;
+	border-left: none;
+	border-radius: 8px;
+	padding: 16px;
+	margin: 16px 0;
 }
 
 blockquote[data-mwc-alert] [data-mwc-alert-marker] {
-  display: none;
+	display: none;
 }
 
 blockquote[data-mwc-alert="note"] {
-  background: rgba(100, 108, 255, 0.08);
-  border: 1px solid rgba(100, 108, 255, 0.16);
+	background: rgba(100, 108, 255, 0.08);
+	border: 1px solid rgba(100, 108, 255, 0.16);
 }
 blockquote[data-mwc-alert="note"]::before {
-  content: "Note";
-  font-weight: 600;
-  color: #3451b2;
-  display: block;
-  margin-bottom: 8px;
+	content: "Note";
+	font-weight: 600;
+	color: #3451b2;
+	display: block;
+	margin-bottom: 8px;
 }
 ```
 
@@ -300,12 +300,14 @@ renderer framework-agnostic and portable.
 
 Markdown WC supports Mermaid fenced code blocks:
 
-```md
+````md
 ```mermaid
 graph TD
   A --> B
 ```
-```
+````
+
+````
 
 When Mermaid blocks are detected, Markdown WC emits a `<markdown-wc-mermaid>` element and adds an import URL to frontmatter:
 
@@ -313,16 +315,16 @@ When Mermaid blocks are detected, Markdown WC emits a `<markdown-wc-mermaid>` el
 const { html, frontmatter } = await parse(markdown)
 // frontmatter.imports includes:
 // "https://cdn.jsdelivr.net/npm/@opral/markdown-wc/dist/markdown-wc-mermaid.js"
-```
+````
 
 Consumers must load `frontmatter.imports` on the client so the custom element is registered before render.
 
-## FAQ 
+## FAQ
 
 ### Why not use React MDX or Svelte MDsveX?
 
-React MDX and Svelte MDsveX are great tools but they introduce a dependency on a specific framework which is a no-go for portability. 
+React MDX and Svelte MDsveX are great tools but they introduce a dependency on a specific framework which is a no-go for portability.
 
 ### Why not use a `<script>` tag to import the web components?
 
-Markdown parsers don't remove the `<script>` tag from the output. This means that the script tag would be rendered in the final HTML. To increase interoperability, frontmatter is used to define imports. 
+Markdown parsers don't remove the `<script>` tag from the output. This means that the script tag would be rendered in the final HTML. To increase interoperability, frontmatter is used to define imports.
