@@ -47,9 +47,7 @@
 		"yaml": "^2.8.1"
 	},
 	"devDependencies": {
-		"@lix-js/html-diff": "workspace:*",
 		"@lit/task": "^1.0.3",
-		"@opral/tsconfig": "workspace:*",
 		"@tiptap/core": "^3.10.7",
 		"@tiptap/pm": "^3.10.7",
 		"ajv": "^8.12.0",
