@@ -47,6 +47,7 @@
 		"yaml": "^2.8.1"
 	},
 	"devDependencies": {
+		"@changesets/cli": "^2.29.7",
 		"@lit/task": "^1.0.3",
 		"@tiptap/core": "^3.10.7",
 		"@tiptap/pm": "^3.10.7",
