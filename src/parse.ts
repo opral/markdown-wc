@@ -35,6 +35,20 @@ export async function parse(
 		 * parse(markdown, { externalLinks: true })
 		 */
 		externalLinks?: boolean | ExternalLinksOptions
+		/**
+		 * Resolve relative URLs (images/links) against a base URL/path.
+		 *
+		 * @example
+		 * // Markdown: ![Architecture](./assets/architecture.jpg)
+		 * // Result:   /blog/my-post/assets/architecture.jpg
+		 * parse(markdown, { assetBaseUrl: "/blog/my-post/" })
+		 *
+		 * @example
+		 * // Markdown: [Intro](docs/intro)
+		 * // Result:   https://example.com/docs/intro
+		 * parse(markdown, { assetBaseUrl: "https://example.com/" })
+		 */
+		assetBaseUrl?: string
 	}
 ): Promise<{
 	frontmatter: Record<string, any> & { imports?: string[] }
@@ -43,6 +57,7 @@ export async function parse(
 }> {
 	const withDefaults = {
 		externalLinks: false,
+		assetBaseUrl: undefined,
 		...options,
 	}
 
@@ -60,6 +75,12 @@ export async function parse(
 		} else {
 			processor.use(remarkExternalLinks as any)
 		}
+	}
+
+	if (withDefaults.assetBaseUrl) {
+		processor.use(remarkResolveRelativeUrls as any, {
+			baseUrl: withDefaults.assetBaseUrl,
+		})
 	}
 
 	processor
@@ -126,6 +147,34 @@ export async function parse(
 		detectedCustomElements: (content.data.customElements as []) ?? [],
 		html,
 	}
+}
+
+const remarkResolveRelativeUrls: Plugin<
+	[{ baseUrl: string }]
+> = (options) => {
+	return (tree) => {
+		visit(tree, ["image", "link"], (node: any) => {
+			if (!node?.url || typeof node.url !== "string") return
+			if (!isRelativeUrl(node.url)) return
+			node.url = resolveRelativeUrl(node.url, options.baseUrl)
+		})
+	}
+}
+
+function isRelativeUrl(url: string) {
+	if (url.startsWith("/") || url.startsWith("#")) return false
+	return !/^[a-z][a-z0-9+.-]*:/.test(url)
+}
+
+function resolveRelativeUrl(url: string, baseUrl: string) {
+	const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`
+	const isAbsoluteBase = /^https?:\/\//.test(normalizedBase)
+	const base = isAbsoluteBase ? normalizedBase : `https://local${normalizedBase.startsWith("/") ? "" : "/"}${normalizedBase}`
+	const resolved = new URL(url, base)
+	if (isAbsoluteBase) {
+		return resolved.toString()
+	}
+	return `${resolved.pathname}${resolved.search}${resolved.hash}`
 }
 
 function createSanitizeOptions(customElements: string[]) {
