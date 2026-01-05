@@ -1,5 +1,11 @@
 # @opral/markdown-wc
 
+## 0.7.1
+
+### Patch Changes
+
+- 565d68c: fix readme path
+
 ## 0.7.0
 
 ### Minor Changes
