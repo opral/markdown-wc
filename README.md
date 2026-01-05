@@ -95,6 +95,11 @@ const parsed = parse(markdown)
 // Optionally open external links in new tabs
 // const parsed = parse(markdown, { externalLinks: true })
 
+// Resolve relative asset URLs (images/links) against a base path
+// Markdown: ![Architecture](./assets/architecture.jpg)
+// Result:   /blog/my-post/assets/architecture.jpg
+// const parsed = parse(markdown, { assetBaseUrl: "/blog/my-post/" })
+
 // Register web components
 for (const url of parsed.frontmatter.imports ?? []) {
 	// optionally sanitize the imported imported here

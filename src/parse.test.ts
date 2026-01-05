@@ -172,6 +172,19 @@ test("externalLinks option adds target and rel to external links only", async ()
 	expect(html).toContain('rel="noopener noreferrer"')
 })
 
+test("assetBaseUrl rewrites relative URLs", async () => {
+	const markdown = `
+![Architecture](./assets/architecture.jpg)
+[Local](./docs/intro)
+[External](https://example.com)
+`
+	const html = (await parse(markdown, { assetBaseUrl: "/blog/my-post/" })).html
+
+	expect(html).toContain('src="/blog/my-post/assets/architecture.jpg"')
+	expect(html).toContain('href="/blog/my-post/docs/intro"')
+	expect(html).toContain('href="https://example.com"')
+})
+
 test("adds data-mwc-codeblock to pre elements", async () => {
 	const markdown = `
 \`\`\`js
