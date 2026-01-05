@@ -7,9 +7,9 @@
 		"access": "public"
 	},
 	"files": [
-		"./src",
-		"./dist",
-		"./README.md"
+		"src",
+		"dist",
+		"README.md"
 	],
 	"exports": {
 		".": "./dist/index.js",
