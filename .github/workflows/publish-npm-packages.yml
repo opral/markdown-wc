@@ -1,7 +1,6 @@
 name: publish npm packages
 
 on:
-
   workflow_dispatch:
 
   # trigger this workflow when the CI workflow is completed
@@ -11,7 +10,11 @@ on:
     types:
       - completed
 
-jobs: 
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
   publish:
     # Allow manual runs, otherwise require CI success on main
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
@@ -23,26 +26,24 @@ jobs:
 
       - name: Setup Pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
 
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: "https://registry.npmjs.org"
           cache: "pnpm"
 
-        # Conditional steps based on the check
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
-      
-      - run: pnpm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g "npm@^11.5.1"
 
       - name: Build
         run: pnpm build
 
       - name: Publish packages
         run: pnpm exec changeset publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
