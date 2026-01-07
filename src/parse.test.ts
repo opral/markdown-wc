@@ -73,7 +73,7 @@ This is markdown
 	expect(parsed.frontmatter).toEqual({})
 })
 
-test("only injects css if code blocks are present", async () => {
+test("does not inject stylesheets into rendered html", async () => {
 	const markdown = `
 # Hello World
 This is markdown
@@ -87,7 +87,7 @@ const a = 1
 \`\`\`
 	`
 	const parsedWithCode = await parse(markdownWithCode)
-	expect(parsedWithCode.html).toContain('<link rel="stylesheet"')
+	expect(parsedWithCode.html).not.toContain('<link rel="stylesheet"')
 })
 
 test("can render mermaid diagrams", async () => {
