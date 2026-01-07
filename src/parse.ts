@@ -100,7 +100,6 @@ export async function parse(
 		})
 		.use(mermaidTransformer)
 		.use(customElementDetector)
-		.use(codeBlockDetector)
 		// @ts-ignore
 		.use(remarkRehype, { allowDangerousHtml: true })
 		.use(rehypeRaw)
@@ -135,11 +134,6 @@ export async function parse(
 			...(frontmatter.imports ?? []),
 			"https://cdn.jsdelivr.net/npm/@opral/markdown-wc/dist/markdown-wc-mermaid.js",
 		]
-	}
-
-	if (content.data.containsCodeBlock) {
-		html = `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
-			${html}`
 	}
 
 	return {
@@ -191,20 +185,6 @@ function createSanitizeOptions(customElements: string[]) {
 			),
 			...(defaultSchema.attributes ?? {}),
 		},
-	}
-}
-
-const codeBlockDetector: Plugin = () => (tree, file) => {
-	// Initialize the containsCodeBlock flag in file.data
-	file.data.containsCodeBlock = false
-
-	// Detect if there are code blocks in the Markdown tree
-	// @ts-ignore
-	for (const node of tree.children) {
-		if (node.type === "code") {
-			file.data.containsCodeBlock = true
-			break
-		}
 	}
 }
 

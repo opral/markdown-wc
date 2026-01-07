@@ -117,6 +117,31 @@ Markdown WC renders standard HTML elements (headings, paragraphs, lists, blockqu
 code blocks, tables, etc.) and does not inject inline styles. This keeps the output
 portable and allows the host application to fully control styling.
 
+Code blocks are syntax-highlighted, but no Highlight.js stylesheet is injected.
+To enable highlighting styles, load a Highlight.js theme in your app (or provide your own `.hljs` styles).
+
+Example:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
+/>
+```
+
+React example:
+
+```tsx
+export function MarkdownStyles() {
+  return (
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
+    />
+  );
+}
+```
+
 To get the previous default look, import the bundled stylesheet:
 
 ```css
