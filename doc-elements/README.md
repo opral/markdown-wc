@@ -18,54 +18,32 @@ Or use directly from CDN:
 ```markdown
 ---
 imports:
-  - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-figure.js
+  - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-card.js
+  - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-columns.js
 ---
 
-<doc-figure src="./image.png" caption="My image"></doc-figure>
+<doc-columns cols="2">
+  <doc-card title="Get started" icon="lucide:rocket">
+    Set up your project with our quickstart guide.
+  </doc-card>
+  <doc-card title="API reference" icon="lucide:code">
+    Explore endpoints, parameters, and examples.
+  </doc-card>
+</doc-columns>
 ```
 
 ## Elements
 
 ### Layout
 
-Page-level sections for landing pages and documentation headers.
-
-<markdown-wc-embed src="./src/doc-hero.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-header.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-features.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-feature.md"></markdown-wc-embed>
+<markdown-wc-embed src="./src/doc-columns.md"></markdown-wc-embed>
+<markdown-wc-embed src="./src/doc-card.md"></markdown-wc-embed>
 
 ---
 
 ### Media
 
-Embed images, videos, and icons.
-
 <markdown-wc-embed src="./src/doc-video.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-figure.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-slider.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-icon.md"></markdown-wc-embed>
-
----
-
-### Navigation
-
-Link cards and grids for documentation navigation.
-
-<markdown-wc-embed src="./src/doc-links.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-link.md"></markdown-wc-embed>
-
----
-
-### Interactive
-
-Collapsible content, copy buttons, and user interaction elements.
-
-<markdown-wc-embed src="./src/doc-accordion.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-copy.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-comments.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-comment.md"></markdown-wc-embed>
-<markdown-wc-embed src="./src/doc-pricing.md"></markdown-wc-embed>
 
 ---
 
@@ -76,15 +54,23 @@ Import individual elements as needed:
 ```markdown
 ---
 imports:
+  - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-card.js
+  - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-columns.js
   - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-video.js
-  - https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/dist/doc-figure.js
 ---
 
 # My Documentation
 
-<doc-video src="https://youtu.be/example"></doc-video>
+<doc-columns cols="2">
+  <doc-card title="Quick start" icon="lucide:rocket" href="/docs/intro">
+    Get up and running in minutes.
+  </doc-card>
+  <doc-card title="Examples" icon="lucide:code" href="/docs/examples">
+    Browse code samples.
+  </doc-card>
+</doc-columns>
 
-<doc-figure src="./screenshot.png" caption="App screenshot"></doc-figure>
+<doc-video src="https://youtu.be/example"></doc-video>
 ```
 
 ## License
