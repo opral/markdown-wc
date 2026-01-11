@@ -1,35 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 import { parse } from "@opral/markdown-wc";
-import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import { MarkdownContent } from "../components/MarkdownContent";
+import readmeRaw from "../../../doc-elements/README.md?raw";
 
 const CDN_BASE = "https://cdn.jsdelivr.net/npm/";
-const DOC_ELEMENTS_DIR = fileURLToPath(
-  new URL("../../../doc-elements/", import.meta.url)
-);
-
-const loadDocElements = createServerFn({ method: "GET" }).handler(async () => {
-  const readmePath = path.join(DOC_ELEMENTS_DIR, "README.md");
-  const rawMarkdown = await readFile(readmePath, "utf-8");
-  const parsed = await parse(rawMarkdown);
-  const { html, imports: embedImports } = await inlineEmbeds(parsed.html);
-  const imports = resolveImportUrls(
-    [
-      ...(parsed.frontmatter.imports as string[] | undefined ?? []),
-      ...embedImports,
-    ],
-    "@opral/markdown-wc-doc-elements"
-  );
-
-  return { html, imports };
-});
+const DOC_ELEMENTS_MARKDOWN = import.meta.glob(
+  "../../../doc-elements/src/*.md",
+  { query: "?raw", import: "default", eager: true }
+) as Record<string, string>;
 
 export const Route = createFileRoute("/doc-elements")({
   loader: async () => {
-    return await loadDocElements();
+    const parsed = await parse(readmeRaw);
+    const { html, imports: embedImports } = await inlineEmbeds(parsed.html);
+    const imports = resolveImportUrls(
+      [
+        ...(parsed.frontmatter.imports as string[] | undefined ?? []),
+        ...embedImports,
+      ],
+      "@opral/markdown-wc-doc-elements"
+    );
+    return { html, imports };
   },
   component: DocElementsPage,
 });
@@ -52,14 +43,27 @@ async function inlineEmbeds(html: string) {
     if (!src || /^[a-z][a-z0-9+.-]*:/.test(src)) continue;
 
     const normalized = src.startsWith("./") ? src.slice(2) : src;
-    const filePath = path.resolve(DOC_ELEMENTS_DIR, normalized);
-    const rawMarkdown = await readFile(filePath, "utf-8");
+    const filename = getBasename(normalized);
+    const rawMarkdown = findEmbeddedMarkdown(filename);
+    if (!rawMarkdown) continue;
     const parsed = await parse(rawMarkdown);
     collectedImports.push(...(parsed.frontmatter.imports ?? []));
     nextHtml = nextHtml.replace(fullMatch, parsed.html);
   }
 
   return { html: nextHtml, imports: collectedImports };
+}
+
+function findEmbeddedMarkdown(filename: string) {
+  const entry = Object.entries(DOC_ELEMENTS_MARKDOWN).find(([key]) =>
+    key.endsWith(`/${filename}`)
+  );
+  return entry?.[1];
+}
+
+function getBasename(value: string) {
+  const parts = value.split("/");
+  return parts[parts.length - 1] || value;
 }
 
 function resolveImportUrls(imports: string[] | undefined, defaultPackage: string) {

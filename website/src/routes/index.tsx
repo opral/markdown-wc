@@ -1,25 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 import { parse } from "@opral/markdown-wc";
-import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 import { MarkdownContent } from "../components/MarkdownContent";
+import readmeRaw from "../../../README.md?raw";
 
 const CDN_BASE = "https://cdn.jsdelivr.net/npm/";
 
-const loadReadme = createServerFn({ method: "GET" }).handler(async () => {
-  const readmeUrl = new URL("../../../README.md", import.meta.url);
-  const rawMarkdown = await readFile(fileURLToPath(readmeUrl), "utf-8");
-  const parsed = await parse(rawMarkdown);
-  return {
-    html: parsed.html,
-    imports: resolveImportUrls(parsed.frontmatter.imports as string[] | undefined),
-  };
-});
-
 export const Route = createFileRoute("/")({
   loader: async () => {
-    return await loadReadme();
+    const parsed = await parse(readmeRaw);
+    return {
+      html: parsed.html,
+      imports: resolveImportUrls(
+        parsed.frontmatter.imports as string[] | undefined
+      ),
+    };
   },
   component: HomePage,
 });
