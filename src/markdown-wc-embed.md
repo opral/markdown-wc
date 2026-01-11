@@ -1,6 +1,6 @@
 ---
 imports:
-  markdown-wc-embed: "../dist/markdown-wc-embed.js"
+  - "../dist/markdown-wc-embed.js"
 ---
 
 ## `<markdown-wc-embed>`
@@ -16,7 +16,7 @@ The `<markdown-wc-embed>` element is used to render markdown-wc in a webpage.
 ```markdown
 ---
 imports:
-  doc-embed: "link/to/markdown-wc-embed.js"
+  - "link/to/markdown-wc-embed.js"
 ---
 
 <markdown-wc-embed 

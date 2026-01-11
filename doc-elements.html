@@ -11,47 +11,111 @@
     body {
       font-family: 'Inter', sans-serif;
     }
+    .site-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #e5e5e5;
+      margin-bottom: 1rem;
+    }
+    .site-header nav {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .site-header a {
+      color: #374151;
+      text-decoration: none;
+      font-size: 0.925rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      transition: background-color 0.15s ease;
+    }
+    .site-header a:hover {
+      background-color: #f3f4f6;
+    }
+    .site-header nav a.active {
+      background-color: #f3f4f6;
+      font-weight: 600;
+      color: #111827;
+    }
+    .site-header .separator {
+      color: #d1d5db;
+      user-select: none;
+    }
+    .site-header .external-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .site-header .icon-link {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    .site-header .icon-link svg {
+      width: 18px;
+      height: 18px;
+    }
   </style>
 </head>
 <body style="margin-left: auto; margin-right: auto; max-width: 900px;">
+  <header class="site-header">
+    <nav>
+      <a href="./">Home</a>
+      <span class="separator">|</span>
+      <a href="./doc-elements.html" class="active">Doc elements</a>
+    </nav>
+    <div class="external-links">
+      <a href="https://www.npmjs.com/package/@opral/markdown-wc-doc-elements" target="_blank" class="icon-link">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z"/>
+        </svg>
+        npm
+      </a>
+      <a href="https://github.com/opral/markdown-wc" target="_blank" class="icon-link">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </header>
 
-  <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-    <a href="./">Home</a>
-    <a href="./doc-elements.html">Doc elements</a>
-    <a href="https://github.com/opral/monorepo/tree/main/packages/markdown-wc-doc-elements" target="_blank">Source code</a>
+  <div class="markdown-wc-body">
+    <markdown-wc-embed id="#doc-elements" base="https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/" src="./README.md">
+      <style>
+        h1 a {
+          color: black;
+          text-decoration: none;
+        }
+        h2 a {
+          color: black;
+          text-decoration: none;
+        }
+        h3 a {
+          color: black;
+          text-decoration: none;
+
+        }
+        h4 a {
+          color: black;
+          text-decoration: none;
+
+        }
+        h5 a {
+          color: black;
+          text-decoration: none;
+
+        }
+        h6 a {
+          color: black;
+          text-decoration: none;
+
+        }
+      </style>
+    </markdown-wc-embed>
   </div>
-
-  <markdown-wc-embed id="#doc-elements" base="https://cdn.jsdelivr.net/npm/@opral/markdown-wc-doc-elements/" src="./README.md">
-    <style>
-      h1 a {
-        color: black;
-        text-decoration: none;
-      }
-      h2 a {
-        color: black;
-        text-decoration: none;
-      }
-      h3 a {
-        color: black;
-        text-decoration: none;
-
-      }
-      h4 a {
-        color: black;
-        text-decoration: none;
-
-      }
-      h5 a {
-        color: black;
-        text-decoration: none;
-
-      }
-      h6 a {
-        color: black;
-        text-decoration: none;
-
-      }
-    </style>
-  </markdown-wc-embed>
 </body>
 </html>

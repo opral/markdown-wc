@@ -49,21 +49,12 @@ export default class Element extends LitElement {
 		() => [this.src, this.base] // React to changes in src or base
 	)
 
-	/**
-	 * Applies styles defined in the light DOM `<style>` element to the shadow DOM.
-	 */
-	private applyLightDomStyles() {
-		const styleElement = this.querySelector("style")
-		if (styleElement) {
-			const userStyles = document.createElement("style")
-			userStyles.textContent = styleElement.textContent
-			this.shadowRoot?.appendChild(userStyles)
-		}
+	protected override createRenderRoot() {
+		return this
 	}
 
 	override connectedCallback() {
 		super.connectedCallback()
-		this.applyLightDomStyles()
 		if (!this.base) {
 			this.inheritBaseFromParent()
 		}
