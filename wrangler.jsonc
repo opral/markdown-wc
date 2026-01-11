@@ -2,6 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "markdown-wc",
   "compatibility_date": "2024-12-01",
+  "build": {
+    "command": "pnpm install --frozen-lockfile && pnpm build && rm -rf node_modules"
+  },
   "assets": {
     "directory": "."
   }
