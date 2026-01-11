@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm -C ../doc-elements build && pnpm -C .. build && vite dev --port 3000",
-    "build": "pnpm -C ../doc-elements build && pnpm -C .. build && vite build",
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "build:deps": "pnpm -C ../doc-elements build && pnpm -C .. build",
     "preview": "vite preview"
   },
   "dependencies": {
