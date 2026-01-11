@@ -7,6 +7,6 @@
     "watch_dir": "website"
   },
   "assets": {
-    "directory": "./website/dist"
+    "directory": "./website/dist/client"
   }
 }
