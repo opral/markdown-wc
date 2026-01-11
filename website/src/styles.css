@@ -1,0 +1,77 @@
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: #111827;
+  background: #ffffff;
+}
+
+main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+}
+
+.site-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 20px 24px 12px;
+}
+
+.site-header-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-nav a {
+  color: #374151;
+  text-decoration: none;
+  font-size: 0.925rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #111827;
+}
+
+.site-nav .separator {
+  color: #d1d5db;
+  user-select: none;
+}
+
+.external-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.external-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #374151;
+  text-decoration: none;
+  font-size: 0.925rem;
+}
+
+.external-links svg {
+  width: 18px;
+  height: 18px;
+}

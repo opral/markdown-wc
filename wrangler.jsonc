@@ -6,6 +6,6 @@
     "command": "pnpm install --frozen-lockfile && pnpm build && rm -rf node_modules"
   },
   "assets": {
-    "directory": "."
+    "directory": "./website"
   }
 }

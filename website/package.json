@@ -1,0 +1,25 @@
+{
+  "name": "website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -C ../doc-elements build && pnpm -C .. build && vite dev --port 3000",
+    "build": "pnpm -C ../doc-elements build && pnpm -C .. build && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@opral/markdown-wc": "workspace:*",
+    "@opral/markdown-wc-doc-elements": "workspace:*",
+    "@tanstack/react-router": "^1.132.0",
+    "@tanstack/react-start": "^1.132.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tanstack/router-plugin": "^1.132.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "typescript": "^5.7.2",
+    "vite": "^7.1.7",
+    "vite-tsconfig-paths": "^6.0.2"
+  }
+}

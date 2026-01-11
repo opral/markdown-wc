@@ -100,7 +100,7 @@ export default class Element extends LitElement {
 function resolveUrl(relativePath: string, basePath: string): string {
 	// If basePath is not absolute, use document.baseURI as the absolute base
 	const absoluteBase =
-		basePath.startsWith("http://") || basePath.startsWith("https://") || basePath.startsWith("/")
+		basePath.startsWith("http://") || basePath.startsWith("https://")
 			? basePath
 			: new URL(basePath, document.baseURI).href
 
