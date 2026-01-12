@@ -65,17 +65,28 @@ export default class Element extends LitElement {
 	 * Inherit the `base` value from the nearest parent's HTML comment.
 	 */
 	private inheritBaseFromParent() {
-		const root: DocumentFragment | null = this.getRootNode() as DocumentFragment
-
-		root.childNodes.forEach((node) => {
-			if (node.nodeType === Node.COMMENT_NODE) {
-				const match = node.nodeValue?.match(/mwc-base=(.*?)/)
-				if (match && this.base === undefined) {
-					this.base = node.nodeValue!.split("=")[1]
-					return
-				}
+		let current: Node | null = this.parentNode
+		while (current) {
+			const base = this.getBaseFromComments(current)
+			if (base !== undefined) {
+				this.base = base
+				return
 			}
-		})
+			current = current.parentNode
+		}
+	}
+
+	private getBaseFromComments(node: Node): string | undefined {
+		for (const child of Array.from(node.childNodes)) {
+			if (child.nodeType !== Node.COMMENT_NODE) {
+				continue
+			}
+			const match = child.nodeValue?.match(/mwc-base=([^\s]*)/)
+			if (match) {
+				return match[1]
+			}
+		}
+		return undefined
 	}
 
 	override render() {
