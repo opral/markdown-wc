@@ -1,5 +1,12 @@
 # @opral/markdown-wc
 
+## 0.8.1
+
+### Patch Changes
+
+- 5652b5c: Render `<markdown-wc-embed>` in light DOM so host page styles apply by default.
+  Refresh `default.css` to match inlang website markdown styling and scope it to `.markdown-body`.
+
 ## 0.8.0
 
 ### Minor Changes
