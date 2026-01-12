@@ -40,9 +40,43 @@ Enables writing documentation with web components in markdown.
 | Portable               | ✅       | ✅                 | ❌        | ❌            | ❌      |
 | No custom syntax       | ✅       | ✅                 | ❌        | ❌            | ❌      |
 
+Portable: the output is standard HTML + web components without framework-specific runtime requirements.
+
+## Quick Start
+
+Install:
+
+```bash
+npm install @opral/markdown-wc
+```
+
+Server-side (or build-time) parse:
+
+```ts
+import { parse } from "@opral/markdown-wc"
+
+const markdown = `
+# Hello World
+<my-component></my-component>
+`
+
+const { html, frontmatter } = await parse(markdown)
+```
+
+Client-side: register custom elements listed in `frontmatter.imports`:
+
+```ts
+for (const url of frontmatter.imports ?? []) {
+  await import(url)
+}
+```
+
+Then render `html` inside a container (see Styling below).
+
 ## Usage in browser
 
 The `<markdown-wc-embed>` element can be used to embed markdown-wc in a webpage.
+It renders in the light DOM so the host page's CSS applies to embedded markdown by default.
 
 ```html
 <script
@@ -57,6 +91,8 @@ The `<markdown-wc-embed>` element can be used to embed markdown-wc in a webpage.
 ## Usage in another markdown file
 
 The `<markdown-wc-embed>` element can be used to embed markdown-wc in markdown-wc.
+`imports` must be a list of module URLs (array syntax). Wrap the embed in
+`.markdown-wc-body` if you want the default stylesheet to apply.
 
 ```markdown
 ---
@@ -68,7 +104,9 @@ imports:
 
 This is a markdown file that embeds another markdown file 🤯
 
-<markdown-wc-embed src="https://cdn.jsdelivr.net/gh/opral/monorepo@latest/packages/markdown-wc/README.md"></markdown-wc-embed>
+<div class="markdown-wc-body">
+  <markdown-wc-embed src="https://cdn.jsdelivr.net/gh/opral/monorepo@latest/packages/markdown-wc/README.md"></markdown-wc-embed>
+</div>
 ```
 
 ## Usage as libary
@@ -111,6 +149,11 @@ for (const url of parsed.frontmatter.imports ?? []) {
 render(parsed.html)
 ```
 
+## Security / Sanitization
+
+Markdown WC does not sanitize HTML output. If you render untrusted or remote
+markdown, you must sanitize or trust the source before rendering.
+
 ## Styling markdown-wc
 
 Markdown WC renders standard HTML elements (headings, paragraphs, lists, blockquotes,
@@ -142,7 +185,9 @@ export function MarkdownStyles() {
 }
 ```
 
-To get the previous default look, import the bundled stylesheet:
+To get the default look, import the bundled stylesheet and wrap your rendered HTML
+with a `.markdown-wc-body` container (recommended to avoid CSS collisions). This
+is also the expected styling model for `<markdown-wc-embed>`.
 
 ```css
 @import "@opral/markdown-wc/default.css";
@@ -152,19 +197,19 @@ Or provide your own CSS. Example:
 
 ```css
 /* Wrap rendered HTML in a container and style inside it */
-.markdown-body {
+.markdown-wc-body {
 	color: #213547;
 	font-size: 16px;
 	line-height: 1.7;
 }
 
-.markdown-body h1 {
+.markdown-wc-body h1 {
 	font-size: 2rem;
 	font-weight: 600;
 	margin: 0 0 1rem;
 }
 
-.markdown-body h2 {
+.markdown-wc-body h2 {
 	font-size: 1.5rem;
 	font-weight: 600;
 	margin: 2rem 0 0.75rem;
@@ -172,11 +217,11 @@ Or provide your own CSS. Example:
 	padding-top: 1.25rem;
 }
 
-.markdown-body p {
+.markdown-wc-body p {
 	margin: 1rem 0;
 }
 
-.markdown-body a {
+.markdown-wc-body a {
 	color: #3a5ccc;
 	text-decoration: underline;
 	text-underline-offset: 3px;
@@ -186,22 +231,22 @@ Or provide your own CSS. Example:
 Alert styling example (GitHub alerts):
 
 ```css
-.markdown-body blockquote[data-mwc-alert] {
+.markdown-wc-body blockquote[data-mwc-alert] {
 	border-left: none;
 	border-radius: 8px;
 	padding: 12px 16px;
 	margin: 1rem 0;
 }
 
-.markdown-body blockquote[data-mwc-alert] [data-mwc-alert-marker] {
+.markdown-wc-body blockquote[data-mwc-alert] [data-mwc-alert-marker] {
 	display: none;
 }
 
-.markdown-body blockquote[data-mwc-alert="note"] {
+.markdown-wc-body blockquote[data-mwc-alert="note"] {
 	background: rgba(100, 108, 255, 0.08);
 	border: 1px solid rgba(100, 108, 255, 0.16);
 }
-.markdown-body blockquote[data-mwc-alert="note"]::before {
+.markdown-wc-body blockquote[data-mwc-alert="note"]::before {
 	content: "Note";
 	display: block;
 	font-weight: 600;
@@ -213,7 +258,7 @@ Alert styling example (GitHub alerts):
 Code block styling / copy button hook example:
 
 ```css
-.markdown-body pre[data-mwc-codeblock] {
+.markdown-wc-body pre[data-mwc-codeblock] {
 	position: relative;
 	padding: 16px 20px;
 	border-radius: 8px;
@@ -221,7 +266,7 @@ Code block styling / copy button hook example:
 	overflow-x: auto;
 }
 
-.markdown-body pre[data-mwc-codeblock] > button[data-mwc-copy-button] {
+.markdown-wc-body pre[data-mwc-codeblock] > button[data-mwc-copy-button] {
 	position: absolute;
 	top: 8px;
 	right: 8px;
@@ -233,7 +278,7 @@ Code block styling / copy button hook example:
 	opacity: 0;
 }
 
-.markdown-body pre[data-mwc-codeblock]:hover > button[data-mwc-copy-button] {
+.markdown-wc-body pre[data-mwc-codeblock]:hover > button[data-mwc-copy-button] {
 	opacity: 1;
 }
 ```
@@ -326,18 +371,63 @@ does not render custom UI elements for code blocks; consumers should implement
 copy buttons and other enhancements with CSS and client-side scripts to keep the
 renderer framework-agnostic and portable.
 
+Example copy-button script (based on inlang website-v2). This targets code blocks
+inside `.markdown-wc-body` and appends a `button.mwc-copy-button`:
+
+```ts
+const COPY_BUTTON_CLASS = "mwc-copy-button"
+
+function ensureCopyButtons(root: Document | Element = document) {
+  const blocks = root.querySelectorAll(".markdown-wc-body pre:has(> code)")
+  for (const pre of blocks) {
+    if (pre.querySelector(`.${COPY_BUTTON_CLASS}`)) continue
+
+    const button = document.createElement("button")
+    button.type = "button"
+    button.className = COPY_BUTTON_CLASS
+    button.textContent = "Copy"
+    ;(pre as HTMLElement).style.position = "relative"
+    pre.appendChild(button)
+  }
+}
+
+function handleCopyClick(event: Event) {
+  const target = event.target
+  if (!(target instanceof HTMLElement)) return
+  const button = target.closest(`.${COPY_BUTTON_CLASS}`)
+  if (!button) return
+
+  const pre = button.closest("pre")
+  const code = pre?.querySelector("code")?.textContent ?? ""
+  navigator.clipboard.writeText(code)
+
+  const previous = button.textContent
+  button.textContent = "Copied!"
+  window.setTimeout(() => {
+    button.textContent = previous || "Copy"
+  }, 1500)
+}
+
+export function initMarkdownCopyButtons() {
+  if (typeof window === "undefined") return
+  ensureCopyButtons()
+  document.addEventListener("click", handleCopyClick)
+
+  const observer = new MutationObserver(() => ensureCopyButtons())
+  observer.observe(document.body, { childList: true, subtree: true })
+}
+```
+
 ## Mermaid diagrams
 
 Markdown WC supports Mermaid fenced code blocks:
 
-````md
+```md
 ```mermaid
 graph TD
   A --> B
 ```
-````
-
-````
+```
 
 When Mermaid blocks are detected, Markdown WC emits a `<markdown-wc-mermaid>` element and adds an import URL to frontmatter:
 
@@ -345,7 +435,7 @@ When Mermaid blocks are detected, Markdown WC emits a `<markdown-wc-mermaid>` el
 const { html, frontmatter } = await parse(markdown)
 // frontmatter.imports includes:
 // "https://cdn.jsdelivr.net/npm/@opral/markdown-wc/dist/markdown-wc-mermaid.js"
-````
+```
 
 Consumers must load `frontmatter.imports` on the client so the custom element is registered before render.
 

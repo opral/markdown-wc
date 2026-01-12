@@ -49,21 +49,13 @@ export default class Element extends LitElement {
 		() => [this.src, this.base] // React to changes in src or base
 	)
 
-	/**
-	 * Applies styles defined in the light DOM `<style>` element to the shadow DOM.
-	 */
-	private applyLightDomStyles() {
-		const styleElement = this.querySelector("style")
-		if (styleElement) {
-			const userStyles = document.createElement("style")
-			userStyles.textContent = styleElement.textContent
-			this.shadowRoot?.appendChild(userStyles)
-		}
+	protected override createRenderRoot() {
+		// Render in light DOM so nested embeds can see propagated base comments.
+		return this
 	}
 
 	override connectedCallback() {
 		super.connectedCallback()
-		this.applyLightDomStyles()
 		if (!this.base) {
 			this.inheritBaseFromParent()
 		}
@@ -73,17 +65,28 @@ export default class Element extends LitElement {
 	 * Inherit the `base` value from the nearest parent's HTML comment.
 	 */
 	private inheritBaseFromParent() {
-		const root: DocumentFragment | null = this.getRootNode() as DocumentFragment
-
-		root.childNodes.forEach((node) => {
-			if (node.nodeType === Node.COMMENT_NODE) {
-				const match = node.nodeValue?.match(/mwc-base=(.*?)/)
-				if (match && this.base === undefined) {
-					this.base = node.nodeValue!.split("=")[1]
-					return
-				}
+		let current: Node | null = this.parentNode
+		while (current) {
+			const base = this.getBaseFromComments(current)
+			if (base !== undefined) {
+				this.base = base
+				return
 			}
-		})
+			current = current.parentNode
+		}
+	}
+
+	private getBaseFromComments(node: Node): string | undefined {
+		for (const child of Array.from(node.childNodes)) {
+			if (child.nodeType !== Node.COMMENT_NODE) {
+				continue
+			}
+			const match = child.nodeValue?.match(/mwc-base=([^\s]*)/)
+			if (match) {
+				return match[1]
+			}
+		}
+		return undefined
 	}
 
 	override render() {
@@ -109,7 +112,7 @@ export default class Element extends LitElement {
 function resolveUrl(relativePath: string, basePath: string): string {
 	// If basePath is not absolute, use document.baseURI as the absolute base
 	const absoluteBase =
-		basePath.startsWith("http://") || basePath.startsWith("https://") || basePath.startsWith("/")
+		basePath.startsWith("http://") || basePath.startsWith("https://")
 			? basePath
 			: new URL(basePath, document.baseURI).href
 
