@@ -1,5 +1,12 @@
 # @opral/markdown-wc-doc-elements
 
+## 0.4.0
+
+### Minor Changes
+
+- f3e95a6: Add doc-card and doc-columns components for building card grids in documentation. API mirrors Mintlify's Card and Columns components.
+- f3e95a6: Remove unused components: doc-accordion, doc-callout, doc-comment, doc-comments, doc-copy, doc-feature, doc-features, doc-figure, doc-header, doc-hero, doc-icon, doc-link, doc-links, doc-pricing, doc-slider. Only doc-video, doc-card, and doc-columns remain.
+
 ## 0.3.2
 
 ### Patch Changes
