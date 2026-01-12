@@ -7,6 +7,12 @@ export const siteConfig = {
   npm: "https://www.npmjs.com/package/@opral/markdown-wc",
 };
 
+export function buildPageUrl(pathname: string) {
+  const base = siteConfig.url.replace(/\/$/, "");
+  const normalizedPath = pathname.replace(/^\/+/, "");
+  return normalizedPath ? `${base}/${normalizedPath}` : base;
+}
+
 export function buildSoftwareJsonLd() {
   return {
     "@context": "https://schema.org",

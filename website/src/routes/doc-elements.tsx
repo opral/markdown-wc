@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { parse } from "@opral/markdown-wc";
 import { MarkdownContent } from "../components/MarkdownContent";
 import readmeRaw from "../../../doc-elements/README.md?raw";
+import { buildPageUrl, siteConfig } from "../seo";
 
 const CDN_BASE = "https://cdn.jsdelivr.net/npm/";
 const DOC_ELEMENTS_MARKDOWN = import.meta.glob(
@@ -10,6 +11,23 @@ const DOC_ELEMENTS_MARKDOWN = import.meta.glob(
 ) as Record<string, string>;
 
 export const Route = createFileRoute("/doc-elements")({
+  head: () => {
+    const title = `Doc elements | ${siteConfig.name}`;
+    const description =
+      "Pre-built, styled web components for common documentation patterns.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: buildPageUrl("/doc-elements") },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: buildPageUrl("/doc-elements") }],
+    };
+  },
   loader: async () => {
     const parsed = await parse(readmeRaw);
     const { html, imports: embedImports } = await inlineEmbeds(parsed.html);

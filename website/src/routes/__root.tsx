@@ -13,21 +13,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "markdown-wc" },
-      { name: "description", content: siteConfig.description },
       { property: "og:type", content: "website" },
-      { property: "og:title", content: siteConfig.name },
-      { property: "og:description", content: siteConfig.description },
-      { property: "og:url", content: siteConfig.url },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: siteConfig.name },
-      { name: "twitter:description", content: siteConfig.description },
     ],
     links: [
       { rel: "stylesheet", href: "https://rsms.me/inter/inter.css" },
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: markdownCss },
-      { rel: "canonical", href: siteConfig.url },
     ],
     scripts: [
       {

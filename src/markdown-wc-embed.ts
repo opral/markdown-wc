@@ -50,6 +50,7 @@ export default class Element extends LitElement {
 	)
 
 	protected override createRenderRoot() {
+		// Render in light DOM so nested embeds can see propagated base comments.
 		return this
 	}
 

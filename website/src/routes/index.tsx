@@ -2,10 +2,23 @@ import { createFileRoute } from "@tanstack/react-router";
 import { parse } from "@opral/markdown-wc";
 import { MarkdownContent } from "../components/MarkdownContent";
 import readmeRaw from "../../../README.md?raw";
+import { buildPageUrl, siteConfig } from "../seo";
 
 const CDN_BASE = "https://cdn.jsdelivr.net/npm/";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: siteConfig.name },
+      { name: "description", content: siteConfig.description },
+      { property: "og:title", content: siteConfig.name },
+      { property: "og:description", content: siteConfig.description },
+      { property: "og:url", content: buildPageUrl("/") },
+      { name: "twitter:title", content: siteConfig.name },
+      { name: "twitter:description", content: siteConfig.description },
+    ],
+    links: [{ rel: "canonical", href: buildPageUrl("/") }],
+  }),
   loader: async () => {
     const parsed = await parse(readmeRaw);
     return {
