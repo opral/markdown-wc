@@ -2,6 +2,10 @@
 
 name: versioning
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   # trigger this workflow when the CI workflow is completed
   workflow_run:
