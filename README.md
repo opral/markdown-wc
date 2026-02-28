@@ -6,7 +6,7 @@ imports:
 
 # Markdown WC
 
-Enables writing documentation with web components in markdown.
+Opinionated markdown parser, AST transformer, and serializer for rendering markdown with components.
 
 ```markdown
 ---
@@ -16,9 +16,10 @@ imports:
 
 # Markdown WC
 
-Enables writing documentation with web components in markdown.
+Opinionated markdown parser, AST transformer, and serializer for rendering markdown with components.
 
 <walking-dinosaur></walking-dinosaur>
+<doc-video src="https://youtu.be/IMjJ1jvKsZU"></doc-video>
 ```
 
 <walking-dinosaur></walking-dinosaur>
@@ -26,23 +27,35 @@ Enables writing documentation with web components in markdown.
 
 ## Why
 
-- Enables writing documentation with components in markdown
-- Interoperable with existing markdown parsers
-- Doesn't depend on a framework like [React MDX](https://mdxjs.com/) or [Svelte MDsveX](https://github.com/pngwn/MDsveX)
-- Doesn't introduce custom syntax like [Markdoc](https://markdoc.dev/)
+Markdown has no opinionated off the shelf parsers and serializers that support components without depending on a specific framework or introducing custom syntax. Markdown WC fills this gap by providing:
+
+- One canonical way to parse and serialize markdown which enables out of the box CSS styling and interoperability.
+- Doesn't depend on a framework like [React MDX](https://mdxjs.com/) or [Svelte MDsveX](https://github.com/pngwn/MDsveX).
+- Doesn't introduce custom syntax like [Markdoc](https://markdoc.dev/).
 
 ## Comparison
 
-| Feature                | Markdown | @opral/markdown-wc | React MDX | Svelte MDsveX | Markdoc |
-| ---------------------- | -------- | ------------------ | --------- | ------------- | ------- |
-| Components in markdown | ❌       | ✅                 | ✅        | ✅            | ✅      |
-| Framework agnostic     | ✅       | ✅                 | ❌        | ❌            | ✅      |
-| Portable               | ✅       | ✅                 | ❌        | ❌            | ❌      |
-| No custom syntax       | ✅       | ✅                 | ❌        | ❌            | ❌      |
+| Feature                     | Markdown | @opral/markdown-wc | React MDX | Markdoc |
+| --------------------------- | -------- | ------------------ | --------- | ------- |
+| Roundtrip safe              | ❌       | ✅                 | ✅        | ✅      |
+| Components in markdown      | ❌       | ✅                 | ✅        | ✅      |
+| Framework agnostic          | ✅       | ✅                 | ❌        | ✅      |
+| Portable                    | ✅       | ✅                 | ❌        | ❌      |
+| SDKs for multiple languages | 🟠¹      | ✅                 | 🟠¹       | ❌      |
 
-Portable: the output is standard HTML + web components without framework-specific runtime requirements.
+**Portable** = the output is standard HTML + web components without framework-specific runtime requirements.  
+**Roundtrip safe** = parsing and serializing markdown-wc results in the same markdown.
+
+¹ Parsers exist for multiple languages but they don't share a common AST or output format which makes interoperability and styling difficult.
 
 ## Quick Start
+
+<p>
+  <img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript" width="18" height="18" /> JavaScript ·
+  <a href="TODO"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" width="18" height="18" /> Python</a> ·
+  <a href="TODO"><img src="https://cdn.simpleicons.org/rust/CE422B" alt="Rust" width="18" height="18" /> Rust</a> ·
+  <a href="TODO"><img src="https://cdn.simpleicons.org/go/00ADD8" alt="Go" width="18" height="18" /> Go</a>
+</p>
 
 Install:
 
@@ -67,7 +80,7 @@ Client-side: register custom elements listed in `frontmatter.imports`:
 
 ```ts
 for (const url of frontmatter.imports ?? []) {
-  await import(url)
+	await import(url)
 }
 ```
 
@@ -167,8 +180,8 @@ Example:
 
 ```html
 <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
+	rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
 />
 ```
 
@@ -176,12 +189,12 @@ React example:
 
 ```tsx
 export function MarkdownStyles() {
-  return (
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
-    />
-  );
+	return (
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
+		/>
+	)
 }
 ```
 
@@ -378,43 +391,43 @@ inside `.markdown-wc-body` and appends a `button.mwc-copy-button`:
 const COPY_BUTTON_CLASS = "mwc-copy-button"
 
 function ensureCopyButtons(root: Document | Element = document) {
-  const blocks = root.querySelectorAll(".markdown-wc-body pre:has(> code)")
-  for (const pre of blocks) {
-    if (pre.querySelector(`.${COPY_BUTTON_CLASS}`)) continue
+	const blocks = root.querySelectorAll(".markdown-wc-body pre:has(> code)")
+	for (const pre of blocks) {
+		if (pre.querySelector(`.${COPY_BUTTON_CLASS}`)) continue
 
-    const button = document.createElement("button")
-    button.type = "button"
-    button.className = COPY_BUTTON_CLASS
-    button.textContent = "Copy"
-    ;(pre as HTMLElement).style.position = "relative"
-    pre.appendChild(button)
-  }
+		const button = document.createElement("button")
+		button.type = "button"
+		button.className = COPY_BUTTON_CLASS
+		button.textContent = "Copy"
+		;(pre as HTMLElement).style.position = "relative"
+		pre.appendChild(button)
+	}
 }
 
 function handleCopyClick(event: Event) {
-  const target = event.target
-  if (!(target instanceof HTMLElement)) return
-  const button = target.closest(`.${COPY_BUTTON_CLASS}`)
-  if (!button) return
+	const target = event.target
+	if (!(target instanceof HTMLElement)) return
+	const button = target.closest(`.${COPY_BUTTON_CLASS}`)
+	if (!button) return
 
-  const pre = button.closest("pre")
-  const code = pre?.querySelector("code")?.textContent ?? ""
-  navigator.clipboard.writeText(code)
+	const pre = button.closest("pre")
+	const code = pre?.querySelector("code")?.textContent ?? ""
+	navigator.clipboard.writeText(code)
 
-  const previous = button.textContent
-  button.textContent = "Copied!"
-  window.setTimeout(() => {
-    button.textContent = previous || "Copy"
-  }, 1500)
+	const previous = button.textContent
+	button.textContent = "Copied!"
+	window.setTimeout(() => {
+		button.textContent = previous || "Copy"
+	}, 1500)
 }
 
 export function initMarkdownCopyButtons() {
-  if (typeof window === "undefined") return
-  ensureCopyButtons()
-  document.addEventListener("click", handleCopyClick)
+	if (typeof window === "undefined") return
+	ensureCopyButtons()
+	document.addEventListener("click", handleCopyClick)
 
-  const observer = new MutationObserver(() => ensureCopyButtons())
-  observer.observe(document.body, { childList: true, subtree: true })
+	const observer = new MutationObserver(() => ensureCopyButtons())
+	observer.observe(document.body, { childList: true, subtree: true })
 }
 ```
 
@@ -422,12 +435,14 @@ export function initMarkdownCopyButtons() {
 
 Markdown WC supports Mermaid fenced code blocks:
 
-```md
+````md
 ```mermaid
 graph TD
   A --> B
 ```
-```
+````
+
+````
 
 When Mermaid blocks are detected, Markdown WC emits a `<markdown-wc-mermaid>` element and adds an import URL to frontmatter:
 
@@ -435,7 +450,7 @@ When Mermaid blocks are detected, Markdown WC emits a `<markdown-wc-mermaid>` el
 const { html, frontmatter } = await parse(markdown)
 // frontmatter.imports includes:
 // "https://cdn.jsdelivr.net/npm/@opral/markdown-wc/dist/markdown-wc-mermaid.js"
-```
+````
 
 Consumers must load `frontmatter.imports` on the client so the custom element is registered before render.
 
