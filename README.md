@@ -9,7 +9,6 @@ The crate currently focuses on the smallest API surface needed by `lix` `plugin-
 - Parse markdown bytes/text into top-level mdast-like blocks while preserving source metadata.
 - Optionally normalize AST JSON (`position` stripped, newline/NFC normalization).
 - Serialize blocks back into markdown (preserving trailing-newline + CRLF/LF style metadata).
-- Canonicalize markdown into normalized output (LF + trailing newline).
 
 ## Crate
 
@@ -23,7 +22,6 @@ pub fn parse_markdown(markdown: &str) -> Result<MarkdownDocument, MarkdownWcErro
 pub fn parse_markdown_bytes(bytes: &[u8]) -> Result<MarkdownDocument, MarkdownWcError>;
 pub fn normalize_document(document: &mut MarkdownDocument);
 pub fn serialize_markdown(document: &MarkdownDocument) -> Result<String, MarkdownWcError>;
-pub fn canonicalize_markdown(markdown: &str) -> Result<String, MarkdownWcError>;
 ```
 
 `MarkdownDocument` stores:
@@ -40,8 +38,8 @@ pub struct MarkdownSourceMeta {
 }
 ```
 
-`parse_*` preserves AST `position` nodes by default. Call `normalize_document` when you want
-canonicalized AST values.
+`parse_*` preserves AST `position` nodes by default. Call `normalize_document` before
+`serialize_markdown` when you want canonicalized output.
 
 ## Current Intent
 

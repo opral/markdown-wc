@@ -1,14 +1,6 @@
 use crate::document::{LineEnding, MarkdownDocument};
 use crate::error::MarkdownWcError;
 
-pub fn canonicalize_markdown(markdown: &str) -> Result<String, MarkdownWcError> {
-    let mut document = crate::parse::parse_markdown(markdown)?;
-    crate::normalize::normalize_document(&mut document);
-    document.source.had_trailing_newline = true;
-    document.source.line_ending = LineEnding::Lf;
-    serialize_markdown(&document)
-}
-
 pub fn serialize_markdown(document: &MarkdownDocument) -> Result<String, MarkdownWcError> {
     let mut rendered_blocks = Vec::with_capacity(document.blocks.len());
     for block in &document.blocks {
