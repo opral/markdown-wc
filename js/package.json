@@ -1,5 +1,5 @@
 {
-  "name": "@opral/markdown-wc-core-wasm",
+  "name": "@opral/markdown-wc",
   "private": true,
   "type": "module",
   "scripts": {
