@@ -12,7 +12,7 @@ The crate currently focuses on the smallest API surface needed by `lix` `plugin-
 
 ## Crate
 
-- Crate name: `markdown_wc_core`
+- Crate name: `markdown_wc`
 - Path: `src/lib.rs`
 
 ## Public API

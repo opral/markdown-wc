@@ -1,4 +1,4 @@
-use markdown_wc_core::{normalize_document, parse_markdown, serialize_markdown, LineEnding};
+use markdown_wc::{normalize_document, parse_markdown, serialize_markdown, LineEnding};
 
 #[test]
 fn parse_preserves_position_and_source_metadata() {

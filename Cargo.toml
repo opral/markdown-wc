@@ -1,5 +1,5 @@
 [package]
-name = "markdown_wc_core"
+name = "markdown_wc"
 version = "0.1.0"
 edition = "2021"
 publish = false
