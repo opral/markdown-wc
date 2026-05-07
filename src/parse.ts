@@ -14,42 +14,61 @@ import remarkFrontmatter from "remark-frontmatter"
 import { visit } from "unist-util-visit"
 import { remarkGithubAlerts } from "./remark-github-alerts.js"
 import { rehypeCodeBlocks } from "./html/rehype-codeblocks.js"
-import {
-	remarkExternalLinks,
-	type ExternalLinksOptions,
-} from "./remark-external-links.js"
+import { remarkExternalLinks, type ExternalLinksOptions } from "./remark-external-links.js"
+
+export type UrlResolverContext = {
+	kind: "link" | "image"
+}
+
+export type UrlResolver = (url: string, context: UrlResolverContext) => string | undefined
+
+export type ParseOptions = {
+	/**
+	 * When enabled, external links open in a new tab and get a safe rel.
+	 *
+	 * `true` applies defaults to all absolute http(s) links (treated as external).
+	 * You can pass an object to customize detection and attributes.
+	 *
+	 * @default false
+	 *
+	 * @example
+	 * parse(markdown, { externalLinks: true })
+	 */
+	externalLinks?: boolean | ExternalLinksOptions
+	/**
+	 * Resolve relative URLs (images/links) against a base URL/path.
+	 *
+	 * @example
+	 * // Markdown: ![Architecture](./assets/architecture.jpg)
+	 * // Result:   /blog/my-post/assets/architecture.jpg
+	 * parse(markdown, { assetBaseUrl: "/blog/my-post/" })
+	 *
+	 * @example
+	 * // Markdown: [Intro](docs/intro)
+	 * // Result:   https://example.com/docs/intro
+	 * parse(markdown, { assetBaseUrl: "https://example.com/" })
+	 */
+	assetBaseUrl?: string
+	/**
+	 * Resolve Markdown link URLs before rendering.
+	 *
+	 * Return a string to override the URL. Return `undefined` to keep the
+	 * default behavior, including `assetBaseUrl` fallback for relative URLs.
+	 */
+	resolveHref?: UrlResolver
+	/**
+	 * Resolve Markdown image URLs before rendering.
+	 *
+	 * Return a string to override the URL. Return `undefined` to keep the
+	 * default behavior, including `assetBaseUrl` fallback for relative URLs.
+	 */
+	resolveSrc?: UrlResolver
+}
 
 /* Converts the markdown with remark and the html with rehype to be suitable for being rendered */
 export async function parse(
 	markdown: string,
-	options?: {
-		/**
-		 * When enabled, external links open in a new tab and get a safe rel.
-		 *
-		 * `true` applies defaults to all absolute http(s) links (treated as external).
-		 * You can pass an object to customize detection and attributes.
-		 *
-		 * @default false
-		 *
-		 * @example
-		 * parse(markdown, { externalLinks: true })
-		 */
-		externalLinks?: boolean | ExternalLinksOptions
-		/**
-		 * Resolve relative URLs (images/links) against a base URL/path.
-		 *
-		 * @example
-		 * // Markdown: ![Architecture](./assets/architecture.jpg)
-		 * // Result:   /blog/my-post/assets/architecture.jpg
-		 * parse(markdown, { assetBaseUrl: "/blog/my-post/" })
-		 *
-		 * @example
-		 * // Markdown: [Intro](docs/intro)
-		 * // Result:   https://example.com/docs/intro
-		 * parse(markdown, { assetBaseUrl: "https://example.com/" })
-		 */
-		assetBaseUrl?: string
-	}
+	options?: ParseOptions
 ): Promise<{
 	frontmatter: Record<string, any> & { imports?: string[] }
 	detectedCustomElements: string[]
@@ -77,9 +96,11 @@ export async function parse(
 		}
 	}
 
-	if (withDefaults.assetBaseUrl) {
-		processor.use(remarkResolveRelativeUrls as any, {
+	if (withDefaults.assetBaseUrl || withDefaults.resolveHref || withDefaults.resolveSrc) {
+		processor.use(remarkResolveUrls as any, {
 			baseUrl: withDefaults.assetBaseUrl,
+			resolveHref: withDefaults.resolveHref,
+			resolveSrc: withDefaults.resolveSrc,
 		})
 	}
 
@@ -143,13 +164,29 @@ export async function parse(
 	}
 }
 
-const remarkResolveRelativeUrls: Plugin<
-	[{ baseUrl: string }]
-> = (options) => {
+type RemarkResolveUrlsOptions = {
+	baseUrl?: string
+	resolveHref?: UrlResolver
+	resolveSrc?: UrlResolver
+}
+
+const remarkResolveUrls: Plugin<[RemarkResolveUrlsOptions]> = (
+	options: RemarkResolveUrlsOptions
+) => {
 	return (tree) => {
 		visit(tree, ["image", "link"], (node: any) => {
 			if (!node?.url || typeof node.url !== "string") return
-			if (!isRelativeUrl(node.url)) return
+
+			const kind = node.type === "link" ? "link" : "image"
+			const resolver = kind === "link" ? options.resolveHref : options.resolveSrc
+			const resolvedUrl = resolver?.(node.url, { kind })
+
+			if (resolvedUrl !== undefined) {
+				node.url = resolvedUrl
+				return
+			}
+
+			if (!options.baseUrl || !isRelativeUrl(node.url)) return
 			node.url = resolveRelativeUrl(node.url, options.baseUrl)
 		})
 	}
@@ -163,7 +200,9 @@ function isRelativeUrl(url: string) {
 function resolveRelativeUrl(url: string, baseUrl: string) {
 	const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`
 	const isAbsoluteBase = /^https?:\/\//.test(normalizedBase)
-	const base = isAbsoluteBase ? normalizedBase : `https://local${normalizedBase.startsWith("/") ? "" : "/"}${normalizedBase}`
+	const base = isAbsoluteBase
+		? normalizedBase
+		: `https://local${normalizedBase.startsWith("/") ? "" : "/"}${normalizedBase}`
 	const resolved = new URL(url, base)
 	if (isAbsoluteBase) {
 		return resolved.toString()

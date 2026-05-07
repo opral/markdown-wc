@@ -25,8 +25,7 @@ async function expectEditorHtmlEqualsSerializer(markdown: string) {
 		htmlFromEditor(markdown),
 		htmlFromSerializer(markdown),
 	])
-	const normalize = (html: string) =>
-		html.replace(/ data-mwc-codeblock(=\"\")?/g, "")
+	const normalize = (html: string) => html.replace(/ data-mwc-codeblock(=\"\")?/g, "")
 	expect(normalize(fromEditor)).toBe(normalize(fromSerializer))
 }
 

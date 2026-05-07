@@ -1,15 +1,9 @@
-import type { Plugin } from "unified";
-import { visit } from "unist-util-visit";
+import type { Plugin } from "unified"
+import { visit } from "unist-util-visit"
 
-type AlertKind = "note" | "tip" | "important" | "warning" | "caution";
+type AlertKind = "note" | "tip" | "important" | "warning" | "caution"
 
-const ALERT_KINDS = new Set<AlertKind>([
-	"note",
-	"tip",
-	"important",
-	"warning",
-	"caution",
-]);
+const ALERT_KINDS = new Set<AlertKind>(["note", "tip", "important", "warning", "caution"])
 
 /**
  * Remark plugin that recognizes GitHub-style alert blockquotes.
@@ -35,44 +29,36 @@ const ALERT_KINDS = new Set<AlertKind>([
  */
 export const remarkGithubAlerts: Plugin<[], any> = () => (tree: any) => {
 	visit(tree, "blockquote", (node: any) => {
-		const children = Array.isArray(node.children) ? node.children : [];
-		if (children.length === 0) return;
+		const children = Array.isArray(node.children) ? node.children : []
+		if (children.length === 0) return
 
-		const firstParagraph = children.find((child: any) => child?.type === "paragraph");
-		if (!firstParagraph) return;
+		const firstParagraph = children.find((child: any) => child?.type === "paragraph")
+		if (!firstParagraph) return
 
-		const paragraphChildren = Array.isArray(firstParagraph.children)
-			? firstParagraph.children
-			: [];
+		const paragraphChildren = Array.isArray(firstParagraph.children) ? firstParagraph.children : []
 		const firstTextNodeIndex = paragraphChildren.findIndex(
 			(child: any) =>
-				child?.type === "text" &&
-				typeof child.value === "string" &&
-				child.value.trim().length > 0
-		);
-		if (firstTextNodeIndex === -1) return;
-		const firstTextNode = paragraphChildren[firstTextNodeIndex];
+				child?.type === "text" && typeof child.value === "string" && child.value.trim().length > 0
+		)
+		if (firstTextNodeIndex === -1) return
+		const firstTextNode = paragraphChildren[firstTextNodeIndex]
 
-		const raw = String(firstTextNode.value);
-		const markerMatch = raw.match(
-			/^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/i
-		);
-		if (!markerMatch) return;
+		const raw = String(firstTextNode.value)
+		const markerMatch = raw.match(/^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*([\s\S]*)$/i)
+		if (!markerMatch) return
 
-		const alertType = markerMatch[1];
-		if (!alertType) return;
-		const kind = alertType.toLowerCase() as AlertKind;
-		if (!ALERT_KINDS.has(kind)) return;
+		const alertType = markerMatch[1]
+		if (!alertType) return
+		const kind = alertType.toLowerCase() as AlertKind
+		if (!ALERT_KINDS.has(kind)) return
 
-		const afterMarker = markerMatch[2] ?? "";
-		const splitIndex = afterMarker.indexOf("\n");
-		const titleLine =
-			splitIndex === -1 ? afterMarker : afterMarker.slice(0, splitIndex);
-		const restLine =
-			splitIndex === -1 ? "" : afterMarker.slice(splitIndex + 1);
+		const afterMarker = markerMatch[2] ?? ""
+		const splitIndex = afterMarker.indexOf("\n")
+		const titleLine = splitIndex === -1 ? afterMarker : afterMarker.slice(0, splitIndex)
+		const restLine = splitIndex === -1 ? "" : afterMarker.slice(splitIndex + 1)
 
 		// Update the marker text node to remove marker and keep title line.
-		firstTextNode.value = titleLine;
+		firstTextNode.value = titleLine
 
 		// Inject marker span at start of first paragraph via raw HTML.
 		firstParagraph.children = [
@@ -82,7 +68,7 @@ export const remarkGithubAlerts: Plugin<[], any> = () => (tree: any) => {
 			},
 			...(titleLine.trim() ? [{ type: "text", value: " " }] : []),
 			...paragraphChildren,
-		];
+		]
 
 		// If there is remaining content on the same paragraph line (after newline),
 		// split it into a new paragraph inserted right after the first paragraph.
@@ -90,16 +76,16 @@ export const remarkGithubAlerts: Plugin<[], any> = () => (tree: any) => {
 			const newParagraph = {
 				type: "paragraph",
 				children: [{ type: "text", value: restLine.trimStart() }],
-			};
-			const firstIndex = children.indexOf(firstParagraph);
+			}
+			const firstIndex = children.indexOf(firstParagraph)
 			if (firstIndex !== -1) {
-				children.splice(firstIndex + 1, 0, newParagraph);
-				node.children = children;
+				children.splice(firstIndex + 1, 0, newParagraph)
+				node.children = children
 			}
 		}
 
-		const data = (node.data ||= {});
-		const hProperties = (data.hProperties ||= {}) as Record<string, any>;
-		hProperties["data-mwc-alert"] = kind;
-	});
-};
+		const data = (node.data ||= {})
+		const hProperties = (data.hProperties ||= {}) as Record<string, any>
+		hProperties["data-mwc-alert"] = kind
+	})
+}

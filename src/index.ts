@@ -1,4 +1,4 @@
-export { parse } from "./parse.js"
+export { parse, type ParseOptions, type UrlResolver, type UrlResolverContext } from "./parse.js"
 export { parseMarkdown } from "./ast/parse-markdown.js"
 export { serializeAst } from "./ast/serialize-ast.js"
 export { normalizeAst } from "./ast/normalize-ast.js"

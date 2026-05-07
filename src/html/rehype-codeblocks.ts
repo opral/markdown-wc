@@ -1,5 +1,5 @@
-import type { Plugin } from "unified";
-import { visit } from "unist-util-visit";
+import type { Plugin } from "unified"
+import { visit } from "unist-util-visit"
 
 /**
  * Rehype plugin that annotates fenced/indented code blocks with `data-mwc-codeblock`.
@@ -13,15 +13,14 @@ import { visit } from "unist-util-visit";
  */
 export const rehypeCodeBlocks: Plugin<[], any> = () => (tree: any) => {
 	visit(tree, "element", (node: any) => {
-		if (!node || node.tagName !== "pre") return;
-		const children = Array.isArray(node.children) ? node.children : [];
+		if (!node || node.tagName !== "pre") return
+		const children = Array.isArray(node.children) ? node.children : []
 		const hasCodeChild = children.some(
 			(child: any) => child?.type === "element" && child.tagName === "code"
-		);
-		if (!hasCodeChild) return;
-		const props = (node.properties ||= {});
-		if (props["data-mwc-codeblock"] != null) return;
-		props["data-mwc-codeblock"] = "";
-	});
-};
-
+		)
+		if (!hasCodeChild) return
+		const props = (node.properties ||= {})
+		if (props["data-mwc-codeblock"] != null) return
+		props["data-mwc-codeblock"] = ""
+	})
+}

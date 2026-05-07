@@ -4,10 +4,7 @@ import rehypeStringify from "rehype-stringify"
 import { visit } from "unist-util-visit"
 import { remarkGithubAlerts } from "../remark-github-alerts.js"
 import { rehypeCodeBlocks } from "./rehype-codeblocks.js"
-import {
-	remarkExternalLinks,
-	type ExternalLinksOptions,
-} from "../remark-external-links.js"
+import { remarkExternalLinks, type ExternalLinksOptions } from "../remark-external-links.js"
 
 export type SerializeToHtmlOptions = {
 	/**

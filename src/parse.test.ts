@@ -185,6 +185,50 @@ test("assetBaseUrl rewrites relative URLs", async () => {
 	expect(html).toContain('href="https://example.com"')
 })
 
+test("resolveHref overrides markdown links while assetBaseUrl still handles images", async () => {
+	const markdown = `
+![Architecture](./assets/architecture.jpg)
+[Backends](./backend.md)
+[Guide](./guide)
+`
+	const html = (
+		await parse(markdown, {
+			assetBaseUrl: "/docs/persistence/",
+			resolveHref: (href) => {
+				if (href.endsWith(".md")) {
+					return "/docs/backend"
+				}
+				return undefined
+			},
+		})
+	).html
+
+	expect(html).toContain('src="/docs/persistence/assets/architecture.jpg"')
+	expect(html).toContain('href="/docs/backend"')
+	expect(html).toContain('href="/docs/persistence/guide"')
+})
+
+test("resolveSrc overrides markdown images while assetBaseUrl still handles links", async () => {
+	const markdown = `
+![Architecture](./assets/architecture.jpg)
+[Guide](./guide)
+`
+	const html = (
+		await parse(markdown, {
+			assetBaseUrl: "/docs/persistence/",
+			resolveSrc: (src) => {
+				if (src.startsWith("./assets/")) {
+					return `/cdn/${src.slice("./assets/".length)}`
+				}
+				return undefined
+			},
+		})
+	).html
+
+	expect(html).toContain('src="/cdn/architecture.jpg"')
+	expect(html).toContain('href="/docs/persistence/guide"')
+})
+
 test("adds data-mwc-codeblock to pre elements", async () => {
 	const markdown = `
 \`\`\`js
